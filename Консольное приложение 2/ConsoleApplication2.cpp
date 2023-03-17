@@ -1,4 +1,4 @@
-﻿#include <fstream>
+#include <fstream>
 #include <iostream>
 #include <locale.h>
 #include <windows.h>
@@ -63,6 +63,7 @@ public:
         return full;
     }
     string fullAddress();
+    Adresa() {}
 };
 
 
@@ -73,7 +74,7 @@ string Adresa::fullAddress() //полный адресс в строку
 }
 
 
-int fullAddressPrint(string* arrAdress,int numbersAdress) //ФУНКЦИЯ (НЕ МЕТОД) печать в файл
+int fullAddressPrint(Adresa* arrAdress,int numbersAdress) //ФУНКЦИЯ (НЕ МЕТОД) печать в файл
 {
     ofstream fileOut("out.txt");
     if (fileOut.is_open())
@@ -96,18 +97,19 @@ int fullAddressPrint(string* arrAdress,int numbersAdress) //ФУНКЦИЯ (НЕ
     fileOut.close();
 }
 
-std::string* createDinamicStringArr(int numbersAdress)// функклия для динамического массива
+Adresa* createDinamicStringArr(int numbersAdress)// функклия для динамического массива
 {
-    std::string* stringArr = new std::string[numbersAdress]
+    Adresa* stringArr = new Adresa[numbersAdress]
     {
     };
     return stringArr;
 }
-void deleteTextArr(std::string* stringArr, int numbersAdress) //удалить массив чтоб не забивать память
+void deleteTextArr(Adresa* stringArr, int numbersAdress) //удалить массив чтоб не забивать память
 {
     delete[] stringArr;
 }
-void bubleAdress(string* arrAdress, int numbersAdress) //пузырек сортировка
+
+void bubleAdress(Adresa* arrAdress, int numbersAdress) //пузырек сортировка
 {
     string t = {};
     bool swap = false;
@@ -144,15 +146,19 @@ int main()
     std::ifstream fileIn("in.txt"); // Открываю и проверяю
     if (fileIn.is_open())
     {
+
         std::cout << "File in.txt is open." << std::endl;
         fileIn >> numbersAdress;
-        string* arrAdress = createDinamicStringArr(numbersAdress);
+        Adresa* arrAdress = createDinamicStringArr(numbersAdress);
 
         for (int i = 0; i < numbersAdress; i++)
         {
             fileIn >> city_m >> street_m >> home_m >> room_m;
             Adresa adress(city_m, street_m, home_m, room_m);
-            arrAdress[i] = adress.fullAddress();
+            arrAdress[i].SetCity(city_m);
+            arrAdress[i].SetStreet(street_m);
+            arrAdress[i].SetHome(home_m);
+            arrAdress[i].SetRoom(room_m);
         }
 
         fileIn.close(); //закрыт
@@ -163,16 +169,6 @@ int main()
 
         deleteTextArr(arrAdress, numbersAdress);//память очищена
 
-        if (!fileIn.is_open()) //на всякий случай
-        {
-            cout << "End\n";
-            return 0;
-        }
-        else
-        {
-            cout << "Файл open.txt не закрылся!\n";
-            return 0;
-        }
     }
     else
     {
